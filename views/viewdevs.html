@@ -12,7 +12,7 @@
     <tbody>
         <% data.forEach((item, index) => { %>
             <tr>
-                <td><%= item.name._id %> <%= item.name.lastName %></td>
+                <td><%= item._id %></td>
                 <td><%= item.name.firstName %> <%= item.name.lastName %></td>
                 <td><%= item.level %></td>
                 <td><%= item.address.unit %> <%= item.address.street %>, <%= item.address.suburb %>, <%= item.address.state %></td>
