@@ -7,7 +7,7 @@
             <select id="assign-to" required>
                 <option value="">Assign to</option>
                 <% devs.forEach((item, index) => { %>
-                    <option value="<%= item._id %>"><%= item.name.firstName %> <%= item.name.lastName %></option>
+                    <option value="<%= item._id %>"><%=item.name.firstName%> <%=item.name.lastName%></option>
                 <% }) %>
             </select>
     </div>
