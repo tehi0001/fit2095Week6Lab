@@ -135,6 +135,6 @@ function loadPage(url, event) {
     }
 
     xhr.open("GET", url, true);
-    xhr.setRequestHeader("Cache-Control", "no-store");
+    //xhr.setRequestHeader("Cache-Control", "no-store");
     xhr.send();
 }
