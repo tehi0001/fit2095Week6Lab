@@ -44,7 +44,69 @@ function addTask() {
     return false;
 }
 
+function addTask() {
+    if(isValidForm()) {
+        let data = {
+            taskName: document.querySelector("#task-name").value,
+            assignTo: document.querySelector("#assign-to").value,
+            taskDate: document.querySelector("#date").value,
+            taskStatus: document.querySelector("#status").value,
+            taskDescription: document.querySelector("#description").value
+        };
+
+        data = JSON.stringify(data);
+
+        let xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                if(this.responseText === "done") {
+                    loadPage("/viewtasks", event);
+                }
+            }
+        }
+
+        xhr.open("POST", "/addtask", true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.send(data);
+    }
+
+    return false;
+}
+
 function addDev() {
+    if(isValidForm()) {
+        let data = {
+            name: {
+                firstName: document.querySelector("#firstName").value,
+                lastName: document.querySelector("#lastName").value
+            },
+            level: document.querySelector("#level").value,
+            address: {
+                unit: document.querySelector("#unit").value,
+                street: document.querySelector("#street").value,
+                suburb: document.querySelector("#suburb").value,
+                state: document.querySelector("#state").value
+            }
+        };
+
+        data = JSON.stringify(data);
+
+        let xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                if(this.responseText === "done") {
+                    loadPage("/viewdevs", event);
+                }
+            }
+        }
+
+        xhr.open("POST", "/add-dev", true);
+        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.send(data);
+    }
+
     return false;
 }
 
@@ -62,7 +124,7 @@ function loadPage(url, event) {
 
     xhr.onreadystatechange = function() {
         if(this.readyState == 4 && this.status == 200) {
-            if(this.responseText === "done") {
+            if(this.responseText === "reloadTasksList") {
                 loadPage('/viewtasks', event);
             }
             else {
@@ -73,5 +135,6 @@ function loadPage(url, event) {
     }
 
     xhr.open("GET", url, true);
+    xhr.setRequestHeader("Cache-Control", "no-store");
     xhr.send();
 }

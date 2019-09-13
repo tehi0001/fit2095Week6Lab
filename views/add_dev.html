@@ -1,0 +1,32 @@
+<h2 class="modal-title">Add new developer</h2>
+<form onsubmit="return addDev()" novalidate>
+    <div class="form-field">
+        <input type="text" id="firstName" placeholder="First name" required>
+    </div>
+    <div class="form-field">
+        <input type="text" id="lastName" placeholder="Last name" required>
+    </div>
+    <div class="form-field">
+        <select id="level" required>
+            <option value="">Level</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Expert">Expert</option>
+        </select>
+    </div>
+    <div class="form-field">
+        <input type="text" id="unit" placeholder="Unit #" required>
+    </div>
+    <div class="form-field">
+        <input type="text" id="street" placeholder="Street" required>
+    </div>
+    <div class="form-field">
+        <input type="text" id="suburb" placeholder="Suburb" required>
+    </div>
+    <div class="form-field">
+        <input type="text" id="state" placeholder="State" required>
+    </div>
+    <div class="buttons">
+        <button type="submit" class="submit-btn">Save</button>
+        <button class="cancel-btn" type="button" onclick="closeModal()">Cancel</button>
+    </div>
+</form>

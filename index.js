@@ -1,75 +1,140 @@
 const express = require("express");
-const mongodb = require("mongodb");
+const mongoose = require("mongoose");
 const bodyparser = require('body-parser');
 const ejs = require('ejs');
 
+const Task = require('./models/task');
+const Developer = require('./models/developer');
+
 const app = express();
-const mongoClient = mongodb.MongoClient;
-const mongoUrl = 'mongodb://localhost:27017/';
+const mongoUrl = 'mongodb://localhost:27017/Week6';
+
 app.engine('html', ejs.renderFile);
 app.set('view engine', 'html');
 app.use(express.static('public'));
 app.use(bodyparser.json());
 
-let db;
+mongoose.connect(mongoUrl, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+    if(err) {
+        console.error(err);
+        throw err;
+    }
 
-mongoClient.connect(mongoUrl, {useUnifiedTopology: true, useNewUrlParser: true}, (error, client) => {
-    if(error) {
-        console.log(error);
-    }
-    else {
-        console.log("Connected to MongoDB");
-        db = client.db('fit2095Week5Lab');
-    }
+    console.log("DB Connected");
+
 });
+
+
 
 app.get('/', (request, response) => {
     response.render('home.html');
 });
 
 app.get('/addtask', (request, response) => {
+    Developer.find({}, (err, data) => {
+        if(err) {
+            response.status(500).send(err);
+            throw err;
+        }
+
+        response.render('addtask.html', {devs: data});
+    })
     response.sendFile(__dirname + '/views/addtask.html');
 });
 
+app.get('/add-dev', (request, response) => {
+    response.sendFile(__dirname + '/views/add_dev.html');
+});
+
 app.get('/viewtasks', (request, response) => {
-    db.collection('tasks').find({}).toArray((error, data) => {
+    Task.find({}, (err, data) => {
+        if(err) {
+            response.status(500).send(err);
+            throw err;
+        }
+
         response.render('viewtasks.html', {data: data});
     });
 });
 
+app.get('/viewdevs', (request, response) => {
+    Developer.find({}, (err, data) => {
+        if(err) {
+            response.status(500).send(err);
+            throw err;
+        }
+
+        response.render('viewdevs.html', {data: data});
+    });
+});
+
 app.get('/deleteTask/:id', (request, response) => {
-    db.collection('tasks').deleteOne({_id: new mongodb.ObjectID(request.params.id)});
-    response.send('done');
+    Task.findByIdAndRemove(request.params.id, (err) => {
+        if(err) {
+            throw err;
+        }
+
+        response.send("reloadTasksList");
+    })
+    
 });
 
 app.get('/changeStatus/:id/:status', (request, response) => {
-    db.collection('tasks').updateOne(
-        {_id: new mongodb.ObjectID(request.params.id)},
-        {$set: {status: request.params.status}}
-    )
-    console.log(request.params.id);
-    console.log(request.params.status);
-    response.send('done');
+
+    Task.updateOne({_id: request.params.id}, {status: request.params.status}, (err) => {
+        if(err) {
+            throw err;
+        }
+
+        response.send('reloadTasksList');
+    })
+    
 });
 
 app.get('/deleteCompleted', (request, response) => {
-    db.collection('tasks').deleteMany({status: "Complete"});
-    response.send('done');
-});
+    Task.deleteMany({status: "Complete"}, (err) => {
+        if(err) {
+            response.status(500).send(err);
+            throw err;
+        }
 
+        response.send("reloadTasksList");
 
-
-app.post('/addtask', (request, response) => {
-    db.collection('tasks').insertOne({
-        name: request.body.taskName,
-        assignTo: request.body.assignTo,
-        date: new Date(request.body.taskDate),
-        status: request.body.taskStatus,
-        description: request.body.taskDescription
     });
-
-    response.send("done");
 });
+
+
+
+app.post('/addtask', async(request, response) => {
+    try {
+        let task = new Task({
+            name: request.body.taskName,
+            assignTo: new mongoose.Types.ObjectId(request.body.assignTo),
+            dueDate: new Date(request.body.taskDate),
+            status: request.body.taskStatus,
+            description: request.body.taskDescription
+        });
+
+        task.save();
+
+        response.send("done");
+    }
+
+    catch(err) {
+        response.status(500).send(err);
+    }
+});
+
+app.post("/add-dev", (request, response) => {
+    try {
+        let dev = new Developer(request.body);
+        dev.save();
+        response.send("done");
+    }
+    catch(err) {
+        response.status(500).send(err);
+    }
+})
 
 
 app.listen(8000, () => { console.log("Server running..."); });

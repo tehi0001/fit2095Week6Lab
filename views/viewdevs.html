@@ -1,0 +1,24 @@
+<h2 class="modal-title">Developers List</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Level</th>
+            <th>Address</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% data.forEach((item, index) => { %>
+            <tr>
+                <td><%= item.name.firstName %> <%= item.name.lastName %></td>
+                <td><%= item.level %></td>
+                <td><%= item.address.unit %> <%= item.address.street %>, <%= item.address.suburb %>, <%= item.address.state %></td>
+            </tr>
+        <% }) %>
+    </tbody>
+</table>
+
+<div style="margin-top: 1em; text-align: center;">
+    <button type="button" class="cancel-btn" onclick="closeModal()">Close</button>
+</div>

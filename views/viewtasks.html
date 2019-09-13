@@ -16,7 +16,7 @@
             <tr>
                 <td><%= item.name %></td>
                 <td>
-                    <% var date = new Date(item.date) %>
+                    <% var date = new Date(item.dueDate) %>
                     <%= date.getDate() %>/<%= date.getMonth() %>/<%= date.getFullYear() %>
                 </td>
                 <td><%= item.description %></td>
